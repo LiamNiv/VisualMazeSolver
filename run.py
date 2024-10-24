@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from maze import Maze
 
 # Constants
 DEFAULT_DISPLAY_WIDTH = 1280
