@@ -1,6 +1,7 @@
 import pygame
 from sys import exit
 from maze import Maze
+from maze import CellType, Cell
 
 # Constants
 DEFAULT_DISPLAY_WIDTH = 1280
@@ -27,6 +28,7 @@ def handle_window_events(screen):
                 else:
                     height = int(width / ASPECT_RATIO)
                 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+    return screen
 
 
 def main():
@@ -35,8 +37,24 @@ def main():
     screen = init_display()
     clock = pygame.time.Clock()
 
+    program_phase = "maze_creation"
+    has_maze_been_created = False
+
     while True:
         screen = handle_window_events(screen)
+        screen_aspect_ration_multiplier = screen.get_width() // 16
+
+        if program_phase == "maze_creation":
+            
+            # if needed, create a new maze
+            if not has_maze_been_created:
+                maze = Maze(10, 10)
+                has_maze_been_created = True
+
+            screen.fill((0, 0, 0))
+            maze.update_size(screen_aspect_ration_multiplier)
+            maze.draw(screen)
+            
 
         pygame.display.update()
         clock.tick(60)  # 60 tick per second

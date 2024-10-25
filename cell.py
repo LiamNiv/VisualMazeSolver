@@ -8,32 +8,32 @@ class CellType(Enum):
     FINISH = auto()
 
     def __str__(self):
-        if self == Cell.EMPTY:
+        if self is CellType.EMPTY:
             return 'E'
-        elif self == Cell.WALL:
+        elif self is CellType.WALL:
             return 'W'
-        elif self == Cell.START:
+        elif self is CellType.START:
             return 'S'
-        elif self == Cell.FINISH:
+        elif self is CellType.FINISH:
             return 'F'
     
 
 class Cell(pygame.sprite.Sprite):
 
-    def __init__(self, cell_type, x_pos, y_pos, width, height):
+    def __init__(self, cell_type, x_pos = 0, y_pos = 0, width = 200, height = 200):
         super().__init__()
         
         # Cell type (empty, wall, start, finish)
         self.cell_type = cell_type
 
         # Cell image
-        if cell_type == CellType.EMPTY:
+        if cell_type is CellType.EMPTY:
             self.image = pygame.image.load('graphics/empty.png').convert_alpha()
-        elif cell_type == CellType.WALL:
+        elif cell_type is CellType.WALL:
             self.image = pygame.image.load('graphics/wall.png').convert_alpha()
-        elif cell_type == CellType.START:
+        elif cell_type is CellType.START:
             self.image = pygame.image.load('graphics/start.png').convert_alpha()
-        elif cell_type == CellType.FINISH:
+        elif cell_type is CellType.FINISH:
             self.image = pygame.image.load('graphics/finish.png').convert_alpha()
 
         # Resize the image
