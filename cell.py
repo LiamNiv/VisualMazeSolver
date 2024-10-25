@@ -28,13 +28,13 @@ class Cell(pygame.sprite.Sprite):
 
         # Cell image
         if cell_type == CellType.EMPTY:
-            self.image = pygame.image.load('images/empty.png').convert_alpha()
+            self.image = pygame.image.load('graphics/empty.png').convert_alpha()
         elif cell_type == CellType.WALL:
-            self.image = pygame.image.load('images/wall.png').convert_alpha()
+            self.image = pygame.image.load('graphics/wall.png').convert_alpha()
         elif cell_type == CellType.START:
-            self.image = pygame.image.load('images/start.png').convert_alpha()
+            self.image = pygame.image.load('graphics/start.png').convert_alpha()
         elif cell_type == CellType.FINISH:
-            self.image = pygame.image.load('images/finish.png').convert_alpha()
+            self.image = pygame.image.load('graphics/finish.png').convert_alpha()
 
         # Resize the image
         self.image = pygame.transform.scale(self.image, (width, height))
@@ -43,3 +43,5 @@ class Cell(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x_pos, y_pos)
 
+    def __str__(self):
+        return f"({self.cell_type}, x: {self.rect.x}, y: {self.rect.y}, width: {self.rect.width}, height: {self.rect.height})"
