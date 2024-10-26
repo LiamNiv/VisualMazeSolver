@@ -20,6 +20,9 @@ class StateManager:
     def set_current_state_initialized(self, state):
         self.initialized[self.current_state] = True
 
+    def is_current_state_initialized(self):
+        return self.initialized[self.current_state]
+
     def set_state(self, state):
 
         if not isinstance(state, State):
