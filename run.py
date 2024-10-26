@@ -10,6 +10,8 @@ DEFAULT_DISPLAY_WIDTH = 1280
 DEFAULT_DISPLAY_HEIGHT = 720
 ASPECT_RATIO = 16 / 9
 
+background_surf_original = pygame.image.load('graphics/background.png')
+
 
 def init_display():
     screen = pygame.display.set_mode((DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT), pygame.RESIZABLE)
@@ -24,7 +26,7 @@ def display_msg(screen, msg, time_in_ms, screen_aspect_ratio_multiplier):
     pygame.display.update()
     pygame.time.delay(time_in_ms)
 
-def handle_window_events(screen, events):
+def update_base_window(screen, events):
     for event in events:
             if event.type == pygame.QUIT:
                 exit()
@@ -38,6 +40,10 @@ def handle_window_events(screen, events):
                 else:
                     height = int(width / ASPECT_RATIO)
                 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+
+    background_image = pygame.transform.scale(background_surf_original, (screen.get_width(), screen.get_height()))
+    screen.blit(background_image, (0, 0))
+    
     return screen
 
 def maze_creation_events(maze, events, screen):
@@ -47,6 +53,7 @@ def maze_creation_events(maze, events, screen):
             if event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 cell_index = maze.which_cell_clicked(mouse_pos)
+                # if a cell is clicked
                 if cell_index is not None:
                     row_index, col_index = cell_index
                     if maze[row_index, col_index].cell_type == CellType.WALL:
@@ -74,7 +81,7 @@ def maze_creation_events(maze, events, screen):
                         # handle mandatory events
                         did_user_click = False
                         events = pygame.event.get()
-                        screen = handle_window_events(screen, events)
+                        screen = update_base_window(screen, events)
                         screen_aspect_ratio_multiplier = screen.get_width() // 16
 
                         # for updating the buttons
@@ -94,7 +101,6 @@ def maze_creation_events(maze, events, screen):
                                         display_msg(screen, "Maze already has a start or finish cell", 1500, screen_aspect_ratio_multiplier)
                                 did_user_click = True   
                                 break   
-                        screen.fill((0, 0, 0))
                         maze.update_size(screen_aspect_ratio_multiplier)
                         maze.draw(screen)
                         start_button.update(cell_center_left_pos[0], cell_center_left_pos[1], screen_aspect_ratio_multiplier)
@@ -117,21 +123,24 @@ def main():
     while True:
         # handle mandatory events
         events = pygame.event.get()
-        screen = handle_window_events(screen, events)
+        screen = update_base_window(screen, events)
         screen_aspect_ratio_multiplier = screen.get_width() // 16
 
+        # scale and load backgound image
+        background_image = pygame.transform.scale(background_surf_original, (screen.get_width(), screen.get_height()))
+        screen.blit(background_image, (0, 0))
+
         if state_manager.get_state() == State.MAINMENU:
-            pass   
+            pass
 
         elif state_manager.get_state() == State.MAZECREATION: 
             # if needed, create a new maze
-            if state_manager.is_maze_created == False:
+            if state_manager.is_current_state_initialized() == False:
                 maze = Maze(10, 10)
-                state_manager.is_maze_created = True
+                state_manager.set_current_state_initialized(True)
             # handle maze creation events
             maze_creation_events(maze, events, screen)
 
-            screen.fill((0, 0, 0))
             maze.update_size(screen_aspect_ratio_multiplier)
             maze.draw(screen)
             

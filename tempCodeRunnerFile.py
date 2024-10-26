@@ -1,0 +1,2 @@
+
+            # handle maze creation events
