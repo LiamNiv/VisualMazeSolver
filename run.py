@@ -35,7 +35,6 @@ def maze_creation_events(maze, events):
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                print("Mouse left button clicked")
                 pos = pygame.mouse.get_pos()
                 pos = maze.which_cell_clicked(pos)
                 if pos is not None:
