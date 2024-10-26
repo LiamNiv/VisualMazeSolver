@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 from maze import Maze
 from maze import CellType, Cell
+from state import State, StateManager
 
 # Constants
 DEFAULT_DISPLAY_WIDTH = 1280
@@ -14,8 +15,8 @@ def init_display():
     pygame.display.set_caption('VisualMazeSolver')
     return screen
 
-def handle_window_events(screen):
-    for event in pygame.event.get():
+def handle_window_events(screen, events):
+    for event in events:
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.VIDEORESIZE:
@@ -30,31 +31,55 @@ def handle_window_events(screen):
                 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
     return screen
 
+def maze_creation_events(maze, events):
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                print("Mouse left button clicked")
+                pos = pygame.mouse.get_pos()
+                pos = maze.which_cell_clicked(pos)
+                if pos is not None:
+                    row_index, col_index = pos
+                    if maze[row_index, col_index].cell_type == CellType.EMPTY:
+                        maze[row_index, col_index] = CellType.WALL
+                    elif maze[row_index, col_index].cell_type == CellType.WALL:
+                        maze[row_index, col_index] = CellType.EMPTY
 
+       
 def main():
 
     pygame.init()
     screen = init_display()
     clock = pygame.time.Clock()
 
-    program_phase = "maze_creation"
-    has_maze_been_created = False
+    state_manager = StateManager()
 
     while True:
-        screen = handle_window_events(screen)
+        # handle mandatory events
+        events = pygame.event.get()
+        screen = handle_window_events(screen, events)
         screen_aspect_ration_multiplier = screen.get_width() // 16
 
-        if program_phase == "maze_creation":
-            
+        if state_manager.get_state() == State.MAINMENU:
+            pass   
+
+        elif state_manager.get_state() == State.MAZECREATION: 
             # if needed, create a new maze
-            if not has_maze_been_created:
+            if state_manager.is_maze_created == False:
                 maze = Maze(10, 10)
-                has_maze_been_created = True
+                state_manager.is_maze_created = True
+            # handle maze creation events
+            maze_creation_events(maze, events)
 
             screen.fill((0, 0, 0))
             maze.update_size(screen_aspect_ration_multiplier)
             maze.draw(screen)
             
+        elif state_manager.get_state() == State.MAZESOLVING:
+            pass
+
+        elif state_manager.get_state() == State.FINISHED:
+            pass
 
         pygame.display.update()
         clock.tick(60)  # 60 tick per second

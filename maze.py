@@ -102,3 +102,11 @@ class Maze(pygame.sprite.Group):
         for row in self.grid:
             for cell in row:
                 screen.blit(cell.image, cell.rect.topleft)
+
+    def which_cell_clicked(self, pos):
+        # return the indexes of the cell that contains the position pos
+        for row_index, row in enumerate(self.grid):
+            for col_index, cell in enumerate(row):
+                if cell.rect.collidepoint(pos):
+                    return (row_index, col_index)
+        return None

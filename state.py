@@ -9,7 +9,7 @@ class State(Enum):
 
 class StateManager:
     def __init__(self):
-        self.state = State.MAINMENU
+        self.state = State.MAZECREATION # only for now, should be MAINMENU
         self.is_maze_created = False
 
     def set_state(self, state):
