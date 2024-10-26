@@ -37,7 +37,7 @@ class Maze(pygame.sprite.Group):
         if not isinstance(value, CellType):
             raise ValueError("Value must be of type CellType")
         
-        # handling "fake" replacment
+        # handling "fake" replacement
         if self.grid[row][col].cell_type == value:
             return
 
@@ -53,10 +53,10 @@ class Maze(pygame.sprite.Group):
             self.hasFinish = True
 
         # handling removing START and FINISH cells
-        if self.grid[row][col] == CellType.START:
+        if self.grid[row][col].cell_type == CellType.START:
             self.hasStart = False
         
-        if self.grid[row][col] == CellType.FINISH:
+        if self.grid[row][col].cell_type == CellType.FINISH:
             self.hasFinish = False
 
         self.grid[row][col] = Cell(value)
@@ -91,7 +91,7 @@ class Maze(pygame.sprite.Group):
         for row in self.grid:
             x_per_row = x
             for cell in row:
-                cell.image = pygame.transform.scale(cell.image, (width, height))
+                cell.image = pygame.transform.scale(cell.original_image, (width, height))
                 cell.rect = cell.image.get_rect()
                 cell.rect.topleft = (x_per_row, y)
                 x_per_row += width
