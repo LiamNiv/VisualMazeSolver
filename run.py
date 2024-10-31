@@ -64,7 +64,14 @@ def maze_creation_events(events, screen, maze, solve_button):
                     else:
                         maze[row_index, col_index] = CellType.EMPTY
                 elif solve_button.button_rect.collidepoint(mouse_pos):
-                    print(solve_maze(maze))
+                    solution = solve_maze(maze)
+                    print(solution)
+                    if solution is not None:
+                        solution_positions = [maze[item_index[0], item_index[1]].rect.center for item_index in solution]
+                        maze.draw(screen)
+                        pygame.draw.lines(screen, "Green", False, solution_positions, screen.get_width() // 16 // 12)
+                        pygame.display.update()
+                        pygame.time.delay(3000)
 
             # right click
             elif event.button == 3:
