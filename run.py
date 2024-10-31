@@ -4,6 +4,7 @@ from maze import Maze
 from maze import CellType, Cell
 from state import State, StateManager
 from button import Button
+from maze_solving import *
 
 # Constants
 DEFAULT_DISPLAY_WIDTH = 1280
@@ -21,7 +22,7 @@ def init_display():
 def display_msg(screen, msg, time_in_ms, screen_aspect_ratio_multiplier):
     font = pygame.font.Font('graphics/Pixeltype.ttf', screen_aspect_ratio_multiplier // 2)
     text_surf = font.render(msg, True, (255, 255, 255))
-    text_rect = text_surf.get_rect(center=(screen_aspect_ratio_multiplier * 8, screen_aspect_ratio_multiplier // 4))
+    text_rect = text_surf.get_rect(center=(screen_aspect_ratio_multiplier * 8, screen_aspect_ratio_multiplier * 4.5))
     screen.blit(text_surf, text_rect)
     pygame.display.update()
     pygame.time.delay(time_in_ms)
@@ -46,7 +47,7 @@ def update_base_window(screen, events):
     
     return screen
 
-def maze_creation_events(maze, events, screen):
+def maze_creation_events(events, screen, maze, solve_button):
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # left click
@@ -62,6 +63,9 @@ def maze_creation_events(maze, events, screen):
                         maze[row_index, col_index] = CellType.WALL
                     else:
                         maze[row_index, col_index] = CellType.EMPTY
+                elif solve_button.button_rect.collidepoint(mouse_pos):
+                    print(solve_maze(maze))
+
             # right click
             elif event.button == 3:
                 mouse_pos = pygame.mouse.get_pos()
@@ -137,12 +141,17 @@ def main():
             # if needed, create a new maze
             if state_manager.is_current_state_initialized() == False:
                 maze = Maze(10, 10)
+                solve_button = Button('Solve', screen_aspect_ratio_multiplier * 2, screen_aspect_ratio_multiplier * 8)
                 state_manager.set_current_state_initialized(True)
             # handle maze creation events
-            maze_creation_events(maze, events, screen)
+            maze_creation_events(events, screen, maze, solve_button)
 
             maze.update_size(screen_aspect_ratio_multiplier)
             maze.draw(screen)
+
+            if maze.has_start and maze.has_finish:
+                solve_button.update(screen_aspect_ratio_multiplier * 2, screen_aspect_ratio_multiplier * 8, screen_aspect_ratio_multiplier)
+                solve_button.draw(screen)   
             
         elif state_manager.get_state() == State.MAZESOLVING:
             pass

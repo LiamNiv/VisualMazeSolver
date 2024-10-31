@@ -5,8 +5,10 @@ class Maze(pygame.sprite.Group):
 
     def __init__(self, columns, rows):
         super().__init__()
-        self.hasStart = False
-        self.hasFinish = False
+        self.has_start = False
+        self.has_finish = False
+        self.start_pos = None
+        self.finish_pos = None
         self.columns = columns
         self.rows = rows
         self.grid = [[Cell(CellType.EMPTY) for _ in range(columns)] for _ in range(rows)]
@@ -43,21 +45,25 @@ class Maze(pygame.sprite.Group):
 
         # handling adding START and FINISH cells
         if value == CellType.START:
-            if self.hasStart:
+            if self.has_start:
                 raise ValueError("Maze already has a start cell")
-            self.hasStart = True
+            self.has_start = True
+            self.start_pos = (row, col)
 
         if value == CellType.FINISH:
-            if self.hasFinish:
+            if self.has_finish:
                 raise ValueError("Maze already has a finish cell")
-            self.hasFinish = True
+            self.has_finish = True
+            self.finish_pos = (row, col)
 
         # handling removing START and FINISH cells
         if self.grid[row][col].cell_type == CellType.START:
-            self.hasStart = False
+            self.has_start = False
+            self.start_pos = None
         
         if self.grid[row][col].cell_type == CellType.FINISH:
-            self.hasFinish = False
+            self.has_finish = False
+            self.finish_pos = None
 
         self.grid[row][col] = Cell(value)
 
@@ -80,8 +86,8 @@ class Maze(pygame.sprite.Group):
     def clear(self):
         # clear the grid
         self.grid = [[CellType.EMPTY for _ in range(self.columns)] for _ in range(self.rows)]
-        self.hasStart = False
-        self.hasFinish = False
+        self.has_start = False
+        self.has_finish = False
 
     def update_size(self, screen_aspect_ratio_multiplier):
         width = screen_aspect_ratio_multiplier * 8 // self.columns
@@ -110,3 +116,13 @@ class Maze(pygame.sprite.Group):
                 if cell.rect.collidepoint(pos):
                     return (row_index, col_index)
         return None
+
+    def get_start_pos(self):
+        if not self.has_start:
+            raise ValueError("Maze does not have a start cell")
+        return self.start_pos
+    
+    def get_end_pos(self):
+        if not self.has_finish:
+            raise ValueError("Maze does not have a finish cell")
+        return self.finish_pos
